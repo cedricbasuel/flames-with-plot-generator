@@ -1,0 +1,10 @@
+gpt_training:
+  dir:
+  model_name:
+  block_size:
+  save_steps:
+gpt_generate:
+  dir:
+  max_length:
+  num_return_sequences:
+  temperature:
