@@ -1,7 +1,7 @@
 '''Text generation script from a pretrained GPT2 model.
 
 Usage:
-    python generate-plot.py <config>.yaml
+    python generate-plot.py config.yaml
 
 Author:
     Cedric Basuel
@@ -30,25 +30,28 @@ if __name__ == '__main__':
         config = yaml.safe_load(cfg)
 
     # load trained model
-    model = GPT2LMHeadModel.from_pretrained('/home/cedric/Downloads/text-generation-1/text-generation')
+    model = GPT2LMHeadModel.from_pretrained(config['gpt_generate']['dir'])
 
     # load tokenizer
-    tokenizer = AutoTokenizer.from_pretrained('/home/cedric/Downloads/text-generation-1/text-generation')
+    tokenizer = AutoTokenizer.from_pretrained(config['gpt_generate']['dir'])
 
     # use transformers's text generation pipeline
     story_generator = TextGenerationPipeline(model=model, tokenizer=tokenizer)
 
     # input prompt 
-    input_prompt = '<BOS> ' # dagdag pa ung results ng flames
+    input_prompt = '<BOS>'
 
     # generate text
     text = story_generator(
         input_prompt,
-        max_length=100,
+        max_length=config['gpt_generate']['max_length'],
         do_sample=True,
-        temperature=0.9,
-        top_p=0.95,
-        top_k=50,
-        repetition_penalty=1.1,
-        num_return_sequences=5,
-    ) # text is a list
+        temperature=config['gpt_generate']['temperature'],
+        top_p=config['gpt_generate']['top_p'],
+        top_k=config['gpt_generate']['top_k'],
+        repetition_penalty=config['gpt_generate']['rep_penalty'],
+        num_return_sequences=config['gpt_generate']['num_return_sequences'],
+    )
+
+    # clean generated text
+    plots_list = [plot['generated_text'].replace('<BOS>','') for plot in text]
