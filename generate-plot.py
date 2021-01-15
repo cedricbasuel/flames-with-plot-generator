@@ -1,5 +1,7 @@
 '''Text generation script from a pretrained GPT2 model.
 
+Code for training with own data is at train-text-gen-gpt2.py.
+
 Usage:
     python generate-plot.py config.yaml
 
@@ -45,7 +47,7 @@ if __name__ == '__main__':
     text = story_generator(
         input_prompt,
         max_length=config['gpt_generate']['max_length'],
-        do_sample=True,
+        do_sample=config['gpt_generate']['do_sample'],
         temperature=config['gpt_generate']['temperature'],
         top_p=config['gpt_generate']['top_p'],
         top_k=config['gpt_generate']['top_k'],
