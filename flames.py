@@ -1,16 +1,6 @@
 from collections import Counter
 
-
-FLAMES_DICTIONARY = {
-    'F':'Friendship',
-    'L':'Love',
-    'A':'Affection',
-    'M':'Marriage',
-    'E':'Enemy',
-    'S':'Sibling'
-    }
-
-def get_common_letters(string1, string2):
+def remove_common_letters(string1, string2):
     '''Given two strings, remove common letters.
 
     Params
@@ -20,7 +10,7 @@ def get_common_letters(string1, string2):
     
     Returns
     -------
-    dict
+    uniqueDict : dict
         Dictionary of unique letters in both strings and their counts.
     '''
     # dict1 = Counter(string1)
@@ -32,18 +22,18 @@ def get_common_letters(string1, string2):
     # commonDict = common1 + common2
 
     #### if lahat ng common letters tatanggalin
-    common1 = [char for char in string1 if char not in string2]
-    common2 = [char for char in string2 if char not in string1]
-    commonDict = common1 + common2
-    commonDict = Counter(commonDict)  
+    unique1 = [char for char in string1 if char not in string2]
+    unique2 = [char for char in string2 if char not in string1]
+    uniqueDict = unique1 + unique2
+    uniqueDict = Counter(uniqueDict)  
     ####
 
-    if len(commonDict) == 0:
+    if len(uniqueDict) == 0:
         print('No letters in common')
         return None
     
     else:
-        return commonDict
+        return uniqueDict
 
 def get_flames_status(letter_list):
     '''Eliminate letters from FLAMES until one 
@@ -62,6 +52,16 @@ def get_flames_status(letter_list):
 
 
     '''
+
+    FLAMES_DICTIONARY = {
+        'F':'Friendship',
+        'L':'Love',
+        'A':'Affection',
+        'M':'Marriage',
+        'E':'Enemy',
+        'S':'Sibling'
+        }
+
     flames_number = sum(letter_list.values())
     print('Remaining letters:', flames_number)
     flames_letters = [char for char in 'FLAMES']
@@ -78,11 +78,13 @@ def get_flames_status(letter_list):
         flames_index = (flames_number % len(flames_letters)) - 1
 
     flames_status = flames_letters[0]
-    return flames_status
+    return FLAMES_DICTIONARY[flames_status]
+
+
 
 if __name__ == '__main__':
 
 
-    letters = get_common_letters('elisabeth','alexander')
+    letters = remove_common_letters('elisabeth','alexander')
     flames_status = get_flames_status(letters)
-    print(FLAMES_DICTIONARY[flames_status])
+    print(flames_status)
