@@ -53,10 +53,19 @@ model = GPT2LMHeadModel.from_pretrained(config['gpt_generate']['dir'])
 tokenizer = AutoTokenizer.from_pretrained(config['gpt_generate']['dir'])
 
 # use transformers's text generation pipeline
-story_generator = TextGenerationPipeline(model=model, tokenizer=tokenizer, device='cuda:0')
+story_generator = TextGenerationPipeline(model=model, tokenizer=tokenizer, device=0)
 
 # form input prompt from names and flames_status 
 input_prompt = '<BOS> ' + name1 + random.choice(prompts[flames_status]) + name2
+
+
+### TO DO create load function para sa model para pwedeng i-import
+### TO DO create predict function na isa-isa lang ung param na pwedeng i-loop 
+### TO DO num_return_seq is just 1 tapos loop thru hyperparams
+### tapos randomize input prompt  each time
+### UI: parang super quick animation nung six na words  ng flames while the results
+### UI: tapos ung generated text parang typing animation. 
+### UI: one letter at a time tapos may 3 dots at the end
 
 # generate text
 text = story_generator(
