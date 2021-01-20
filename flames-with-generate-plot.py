@@ -52,13 +52,13 @@ def create_input_prompts(name1, name2, flames_status, n_plots):
         'Love': [', who is in love with ', ' who loves ', ', lover of ', ', the partner of '],
         'Affection': [', who has affection for ', ' who is affectionate with ', ' who has nothing but affection for '],
         'Marriage': [', who is married to ', ' the partner of '],
-        'Enemy': [', the enemy of ',  ', who hates ', ' the rival of ', ' who is engaged in a rivalry with '],
+        'Enemy': [', the enemy of ',  ', who hates ', ', the rival of ', ' who is engaged in a rivalry with '],
         'Sibling': [', the sibling of '],
     }
 
     context = prompts[flames_status]
 
-    input_prompts = ['<BOS> ' + name1 + random.choice(context) + name2 for n_plot in n_plots]
+    input_prompts = ['<BOS> ' + name1 + random.choice(context) + name2 for n_plot in range(n_plots)]
 
     return input_prompts
 
@@ -82,7 +82,7 @@ def generate_plot(story_generator, input_prompts, temperatures):
             num_return_sequences=config['gpt_generate']['num_return_sequences'],
         )
 
-        plots.append(text)
+        plots.append(text[0])
 
     return plots
 
@@ -95,6 +95,23 @@ name2 = input('Enter name: ')
 unique_letters = flames.remove_common_letters(name1, name2)
 flames_status = flames.get_flames_status(unique_letters)
 print('FLAMES status:', flames_status)
+
+input_prompts = create_input_prompts(name1, name2, flames_status, n_plots=5)
+print(input_prompts)
+
+
+story_generator = load_gpt_model(
+    model_path=config['gpt_generate']['dir'], 
+    tokenizer_path=config['gpt_generate']['dir'],
+    device=0)
+
+
+plots = generate_plot(
+    story_generator,
+    input_prompts=input_prompts,
+    temperatures=[0.7,0.8,0.9,1.1,1.2]
+    )
+
 
 # prompts = {
 #     'Friendship': [', who is friends with ', ', in a friendship with ', ', a good friend of '],
@@ -137,7 +154,8 @@ print('FLAMES status:', flames_status)
 # )
 
 # clean generated text
-plots_list = [plot['generated_text'].replace('<BOS> ','') for plot in text]
+print(plots)
+plots_list = [plot['generated_text'].replace('<BOS> ','') for plot in plots]
 
 for plot in plots_list:
     print('*' * 30)
