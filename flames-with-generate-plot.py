@@ -23,11 +23,6 @@ logging.basicConfig(
     level=logging.DEBUG
     )
 
-CONFIG_FILE = sys.argv[1]
-
-with open(CONFIG_FILE) as cfg:
-    config = yaml.safe_load(cfg)
-
 
 
 def load_gpt_model(model_path, tokenizer_path, device):
@@ -63,101 +58,69 @@ def create_input_prompts(name1, name2, flames_status, n_plots):
     return input_prompts
 
 def generate_plot(story_generator, input_prompts, temperatures):
-    # create list of input prompts
-    # tapos story_generator is looped through input_prompts and params using enumerate? or zip ba un
-    # ang ung params sa config list na mismo
+    
     plots = []
-    # input_prompts = [None for index in n_plots]
 
+    if len(input_prompts) != len(temperatures):
+        raise AssertionError('Length of input prompts and temperatures must be equal to n_plots.')
 
-    for (in_prompt, temp) in zip(input_prompts, temperatures):
-        text = story_generator(
-            in_prompt,
-            max_length=config['gpt_generate']['max_length'],
-            do_sample=config['gpt_generate']['do_sample'],
-            temperature=temp,
-            top_p=config['gpt_generate']['top_p'],
-            top_k=config['gpt_generate']['top_k'],
-            repetition_penalty=config['gpt_generate']['rep_penalty'],
-            num_return_sequences=config['gpt_generate']['num_return_sequences'],
-        )
-
-        plots.append(text[0])
+    else:
+        for (in_prompt, temp) in zip(input_prompts, temperatures):
+            text = story_generator(
+                in_prompt,
+                max_length=config['gpt_generate']['max_length'],
+                do_sample=config['gpt_generate']['do_sample'],
+                temperature=temp,
+                top_p=config['gpt_generate']['top_p'],
+                top_k=config['gpt_generate']['top_k'],
+                repetition_penalty=config['gpt_generate']['rep_penalty'],
+                num_return_sequences=config['gpt_generate']['num_return_sequences'],
+            )
+            plots.append(text[0])
 
     return plots
 
 
-device = torch.device('cuda')
 
-name1 = input('Enter name: ')
-name2 = input('Enter name: ')
+if __name__ == "__main__":
 
-unique_letters = flames.remove_common_letters(name1, name2)
-flames_status = flames.get_flames_status(unique_letters)
-print('FLAMES status:', flames_status)
+    CONFIG_FILE = sys.argv[1]
 
-input_prompts = create_input_prompts(name1, name2, flames_status, n_plots=5)
-print(input_prompts)
+    with open(CONFIG_FILE) as cfg:
+        config = yaml.safe_load(cfg)
 
+    name1 = input('Enter name: ')
+    name2 = input('Enter name: ')
 
-story_generator = load_gpt_model(
-    model_path=config['gpt_generate']['dir'], 
-    tokenizer_path=config['gpt_generate']['dir'],
-    device=0)
+    unique_letters = flames.remove_common_letters(name1, name2)
+    flames_status = flames.get_flames_status(unique_letters)
+    print('FLAMES status:', flames_status)
 
+    input_prompts = create_input_prompts(name1, name2, flames_status, n_plots=config['gpt_generate']['n_plots'])
 
-plots = generate_plot(
-    story_generator,
-    input_prompts=input_prompts,
-    temperatures=[0.7,0.8,0.9,1.1,1.2]
-    )
+    story_generator = load_gpt_model(
+        model_path=config['gpt_generate']['dir'], 
+        tokenizer_path=config['gpt_generate']['dir'],
+        device=0)
 
+    plots = generate_plot(
+        story_generator,
+        input_prompts=input_prompts,
+        temperatures=config['gpt_generate']['temperatures']
+        )
 
-# prompts = {
-#     'Friendship': [', who is friends with ', ', in a friendship with ', ', a good friend of '],
-#     'Love': [', who is in love with ', ' who loves ', ', lover of ', ', the partner of '],
-#     'Affection': [', who has affection for ', ' who is affectionate with ', ' who has nothing but affection for '],
-#     'Marriage': [', who is married to ', ' the partner of '],
-#     'Enemy': [', the enemy of ',  ', who hates ', ' the rival of ', ' who is engaged in a rivalry with '],
-#     'Sibling': [', the sibling of '],
-# }
+    ### [DONE] TO DO create load function para sa model para pwedeng i-import
+    ### [DONE] TO DO create predict function na isa-isa lang ung param na pwedeng i-loop 
+    ### [DONE] TO DO num_return_seq is just 1 tapos loop thru hyperparams
+    ### [DONE] tapos randomize input prompt  each time
+    ### UI: parang super quick animation nung six na words  ng flames while the results
+    ### UI: tapos ung generated text parang typing animation. 
+    ### UI: one letter at a time tapos may 3 dots at the end
 
+    # clean generated text
+    plots_list = [plot['generated_text'].replace('<BOS> ','') for plot in plots]
 
-# form input prompt from names and flames_status 
-# input_prompt = '<BOS> ' + name1 + random.choice(prompts[flames_status]) + name2
-
-
-### TO DO create load function para sa model para pwedeng i-import
-### TO DO create predict function na isa-isa lang ung param na pwedeng i-loop 
-### TO DO num_return_seq is just 1 tapos loop thru hyperparams
-### tapos randomize input prompt  each time
-### UI: parang super quick animation nung six na words  ng flames while the results
-### UI: tapos ung generated text parang typing animation. 
-### UI: one letter at a time tapos may 3 dots at the end
-
-
-
-
-
-
-
-# generate text
-# text = story_generator(
-#     input_prompt,
-#     max_length=config['gpt_generate']['max_length'],
-#     do_sample=config['gpt_generate']['do_sample'],
-#     temperature=config['gpt_generate']['temperature'],
-#     top_p=config['gpt_generate']['top_p'],
-#     top_k=config['gpt_generate']['top_k'],
-#     repetition_penalty=config['gpt_generate']['rep_penalty'],
-#     num_return_sequences=config['gpt_generate']['num_return_sequences'],
-# )
-
-# clean generated text
-print(plots)
-plots_list = [plot['generated_text'].replace('<BOS> ','') for plot in plots]
-
-for plot in plots_list:
-    print('*' * 30)
-    print(plot)
-    
+    for plot in plots_list:
+        print('*' * 30)
+        print(plot)
+        
