@@ -17,21 +17,11 @@ import sys
 import yaml
 import torch
 
-logging.basicConfig(
-    # filename='train_image.log',
-    format='[FLAMES-WITH-TEXTGEN] %(asctime)s %(message)s', datefmt='%m/%d/%Y %I:%M:%S %p', 
-    level=logging.DEBUG
-    )
-
-
-
 def load_gpt_model(model_path, tokenizer_path, device):
     # load trained model
-    # config['gpt_generate']['dir']
     model = GPT2LMHeadModel.from_pretrained(model_path)
 
     # load tokenizer
-    # config['gpt_generate']['dir']
     tokenizer = AutoTokenizer.from_pretrained(tokenizer_path)
 
     # use transformers's text generation pipeline
