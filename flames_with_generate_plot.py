@@ -7,7 +7,6 @@ Author:
     Cedric Basuel
 '''
 
-
 import flames
 import logging
 from functools import wraps
@@ -16,16 +15,6 @@ import random
 import sys
 import yaml
 import torch
-
-### TO DO: function b4 main() cant have params from config. 
-### so i-list down lahat sa definition
-### then transfer config yaml back to main
-
-CONFIG_FILE = sys.argv[1]
-
-with open(CONFIG_FILE) as cfg:
-    config = yaml.safe_load(cfg)
-
 
 def load_gpt_model(model_path, tokenizer_path, device):
     model = GPT2LMHeadModel.from_pretrained(model_path)
@@ -57,15 +46,8 @@ def create_input_prompts(name1, name2, flames_status, n_plots):
     return input_prompts
 
 def generate_plot(
-    story_generator, 
-    input_prompts, 
-    temperatures,
-    max_length,
-    do_sample,
-    top_p,
-    top_k,
-    repetition_penalty,
-    num_return_sequences,
+    story_generator, input_prompts, temperatures, max_length,
+    do_sample, top_p, top_k, repetition_penalty, num_return_sequences,
     ):
     
     plots = []
@@ -77,13 +59,13 @@ def generate_plot(
         for (in_prompt, temp) in zip(input_prompts, temperatures):
             text = story_generator(
                 in_prompt,
-                max_length=config['gpt_generate']['max_length'],
-                do_sample=config['gpt_generate']['do_sample'],
+                max_length=max_length,
+                do_sample=do_sample,
                 temperature=temp,
-                top_p=config['gpt_generate']['top_p'],
-                top_k=config['gpt_generate']['top_k'],
-                repetition_penalty=config['gpt_generate']['rep_penalty'],
-                num_return_sequences=config['gpt_generate']['num_return_sequences'],
+                top_p=top_p,
+                top_k=top_k,
+                repetition_penalty=repetition_penalty,
+                num_return_sequences=num_return_sequences,
             )
             plots.append(text[0])
 
@@ -93,9 +75,16 @@ def generate_plot(
 
 if __name__ == "__main__":
 
+    CONFIG_FILE = sys.argv[1]
+
+    with open(CONFIG_FILE) as cfg:
+        config = yaml.safe_load(cfg)
+
+    # Get names
     name1 = input('Enter name: ')
     name2 = input('Enter name: ')
 
+    # Get flames status
     unique_letters = flames.remove_common_letters(name1, name2)
     flames_status = flames.get_flames_status(unique_letters)
     print('FLAMES status:', flames_status)
@@ -110,7 +99,13 @@ if __name__ == "__main__":
     plots = generate_plot(
         story_generator,
         input_prompts=input_prompts,
-        temperatures=config['gpt_generate']['temperatures']
+        temperatures=config['gpt_generate']['temperatures'],
+        max_length=config['gpt_generate']['max_length'],
+        do_sample=config['gpt_generate']['do_sample'],
+        top_p=config['gpt_generate']['top_p'],
+        top_k=config['gpt_generate']['top_k'],
+        repetition_penalty=config['gpt_generate']['rep_penalty'],
+        num_return_sequences=config['gpt_generate']['num_return_sequences'],
         )
 
     ### [DONE] TO DO create load function para sa model para pwedeng i-import
