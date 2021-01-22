@@ -63,7 +63,7 @@ def get_flames_status(letter_list):
         }
 
     flames_number = sum(letter_list.values())
-    print('Remaining letters:', flames_number)
+    # print('Remaining letters:', flames_number)
     flames_letters = [char for char in 'FLAMES']
     flames_index = (flames_number % len(flames_letters)) - 1
 
