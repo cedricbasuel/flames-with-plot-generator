@@ -7,6 +7,13 @@ Author:
     Cedric Basuel
 '''
 
+# TO DO docstrings
+# TO DO [app.py] split flames from  generate_plot
+# TO DO transfer config
+# TO DO ung comma in front of input prompt transfer sa function
+# TO DO [UI] animations or progress bar
+# TO DO readme.md, incl carbon.now.sh / https://hackernoon.com/presenting-your-code-beautifully-fdbab9e6fb68
+
 import flames
 import logging
 from functools import wraps
@@ -15,6 +22,23 @@ import random
 import sys
 import yaml
 import torch
+import time
+
+logging.basicConfig(
+    # filename='train_image.log',
+    format='[FLAMES-WITH-STORY-GENERATOR] %(asctime)s %(message)s', datefmt='%m/%d/%Y %I:%M:%S %p', 
+    level=logging.DEBUG
+    )
+
+def timer(func):
+    @wraps(func)
+    def wrapper_time(*args, **kwargs):
+        start_time = time.time()
+        value = func(*args, **kwargs)
+        run_time = time.time() - start_time
+        logging.info('{} took {} seconds to finish.'.format(func.__name__, run_time))
+        return value
+    return wrapper_time
 
 def load_gpt_model(model_path, tokenizer_path, device):
     model = GPT2LMHeadModel.from_pretrained(model_path)
@@ -24,27 +48,26 @@ def load_gpt_model(model_path, tokenizer_path, device):
         tokenizer=tokenizer, 
         # device=0
         )
-
     return story_generator
-
 
 def create_input_prompts(name1, name2, flames_status, n_plots):
 
     prompts = {
-        'Friendship': [', who is friends with ', ', in a friendship with ', ', a good friend of '],
-        'Love': [', who is in love with ', ' who loves ', ', lover of ', ', the partner of '],
-        'Affection': [', who has affection for ', ' who is affectionate with ', ' who has nothing but affection for '],
-        'Marriage': [', who is married to ', ' the partner of '],
-        'Enemy': [', the enemy of ',  ', who hates ', ', the rival of ', ' who is engaged in a rivalry with '],
-        'Sibling': [', the sibling of '],
+        'Friendship': ['who is friends with', 'in a friendship with', 'a good friend of'],
+        'Love': ['who is in love with', 'who loves', 'lover of', 'the partner of'],
+        'Affection': ['who has affection for', 'who is affectionate with', 'who has nothing but affection for'],
+        'Marriage': ['who is married to', 'the partner of'],
+        'Enemy': ['the enemy of',  'who hates', 'the rival of', 'who is engaged in a rivalry with'],
+        'Sibling': ['the sibling of'],
     }
 
     context = prompts[flames_status]
 
-    input_prompts = ['<BOS> ' + name1 + random.choice(context) + name2 + ', ' for n_plot in range(n_plots)]
+    input_prompts = ['<BOS> ' + name1 + ', ' + random.choice(context) + name2 + ', ' for n_plot in range(n_plots)]
 
     return input_prompts
 
+@timer
 def generate_plot(
     story_generator, input_prompts, temperatures, max_length,
     do_sample, top_p, top_k, repetition_penalty, num_return_sequences,
@@ -116,7 +139,7 @@ if __name__ == "__main__":
     ### UI: tapos ung generated text parang typing animation. 
     ### UI: one letter at a time tapos may 3 dots at the end
 
-    # clean generated text
+    # Clean generated text
     plots_list = [plot['generated_text'].replace('<BOS> ','') for plot in plots]
 
     for plot in plots_list:
