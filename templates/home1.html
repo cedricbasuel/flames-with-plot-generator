@@ -8,6 +8,9 @@
     <link rel="stylesheet" href="../static/css/Page-1.css" media="screen">
     <link rel="stylesheet" href="../static/css/nicepage.css" media="screen">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+
 </head>
 
 
@@ -24,7 +27,7 @@
         <div class="u-clearfix u-sheet u-sheet-1">
           <h6 class="u-align-left u-text u-text-palette-4-dark-2 u-text-1">TYPE YOUR NAMES<br>
           </h6>
-          <h6 class="u-align-left u-text u-text-palette-4-dark-2 u-text-2">Flames is a popular paper-based game that aims to determine a 'destiny' given a pair of names. Here, we level up the game by using OpenAI's GPT2 model to generate a story based on the flames status.<br>
+          <h6 class="u-align-left u-text u-text-palette-4-dark-2 u-text-2">Flames was a popular game among children that aimed to determine a 'destiny' given a pair of names. Here, we revisit the game and level it up by using OpenAI's GPT2 model to generate a story based on the flames status.<br>
           </h6>
           <div class="u-expanded-width-xs u-form u-form-1">
             <form action="{{ url_for('predict') }}" method="POST" class="u-clearfix u-form-horizontal u-form-spacing-15 u-inner-form" style="padding: 15px">
@@ -36,7 +39,7 @@
               </div>
               <div class="u-form-group u-form-submit">
                 <label>&nbsp;</label>
-                <input type="submit" name="submit" value="Go!" class="btn-primary form-control" />
+                <input id="start-loader" type="submit" name="submit" value="Go!" class="btn-primary form-control" />
               </div>
             </form>
           </div>
@@ -81,16 +84,11 @@
     {% endfor %} -->
 
 
-    <section class="u-clearfix u-palette-5-light-2 u-section-2" id="sec-0eae">
-
-
-
-
-        
+    <section class="u-clearfix u-palette-5-light-2 u-section-2" id="sec-0eae">   
         <div class="u-clearfix u-sheet u-valign-middle-xs u-sheet-1">
             <span class="u-icon u-icon-circle u-text-palette-3-light-1 u-icon-1">
-                <svg class="u-svg-link" preserveAspectRatio="xMidYMin slice" viewBox="0 0 292.907 292.907" style=""><use xlink:href="#svg-17d7"></use>
-                </svg>
+                <!-- <svg class="u-svg-link" preserveAspectRatio="xMidYMin slice" viewBox="0 0 292.907 292.907" style=""><use xlink:href="#svg-17d7"></use>
+                </svg> -->
                 <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" xml:space="preserve" class="u-svg-content" viewBox="0 0 292.907 292.907" x="0px" y="0px" id="svg-17d7" style="enable-background:new 0 0 292.907 292.907;">
                     <g>
                         <path d="M84.283,74.379c16.232-2.574,27.311-17.813,24.735-34.055c-1.636-10.315-8.402-18.542-17.285-22.51   c1.425-1.316,3.085-2.59,5.06-3.781c0.939-0.566,1.464-1.626,1.344-2.717c-0.121-1.09-0.865-2.011-1.905-2.358   C91.202,7.281,85.53,8.124,80.348,9.996c0.638-1.84,1.504-3.755,2.689-5.744c0.562-0.942,0.525-2.125-0.095-3.029   c-0.62-0.905-1.71-1.367-2.792-1.183C69.427,1.866,61.3,14.317,58.407,21.455c-0.515,1.271-0.885,2.571-1.112,3.868   c-5.652,6.423-8.509,15.22-7.065,24.322C52.805,65.889,68.054,76.953,84.283,74.379z"></path><path d="M287.695,68.968c-4.185-3.888-10.732-3.65-14.622,0.538l-34.78,37.436c-2.904-2.068-6.261-3.482-9.85-4.052l-15.145-2.401   c-3.629-0.575-7.303-0.271-10.737,0.827l-21.514-46.402c-2.404-5.184-8.555-7.438-13.738-5.035   c-5.184,2.403-7.438,8.555-5.035,13.738l24.928,53.767c-0.54,1.982,0.149-2.066-8.666,55.641l-13.608,16.735l0.4,0.492   c3.77,4.636,5.827,10.429,5.827,16.403v49.844c0.169,0.006,0.335,0.025,0.506,0.025c7.143,0,12.933-5.79,12.933-12.933v-37.019   l14.422-17.736l12.815,2.447l-3.368,21.24c-0.114,0.724-0.168,1.456-0.158,2.189l0.587,46.354   c0.09,7.086,5.861,12.77,12.929,12.768c0.055,0,0.111,0,0.167-0.001c7.142-0.09,12.858-5.953,12.768-13.096l-0.572-45.252   c0.77-4.855,13.787-86.709,13.868-88.646l40.183-43.251C292.121,79.403,291.881,72.858,287.695,68.968z">
@@ -103,25 +101,58 @@
 
                         </path>
   </g></svg></span>
-  <h6 class="u-align-left u-text u-text-palette-4-dark-2 u-text-1">YOUR STATUS IS<br>
+  <h6 class="u-align-left u-text u-text-palette-4-dark-2 u-text-1" style="text-align: left;">YOUR STATUS IS<br>
   </h6>    
   <h6 class="u-align-left u-text u-text-palette-4-dark-2 u-text-2">GENERATING STORIES... DONE.<br>
-  </h6>
+  </h6>          
+  <img src="../static/loader_small.gif" id="gif" style="display: none; width: 50px; height: 50px;">
+
           <h1 class="u-align-left u-text u-text-palette-4-dark-2 u-title u-text-3">
             <span class="u-text-palette-4-dark-1">{{ status }}</span>
-            <span class="u-text-palette-4-dark-1">.</span>
+
           </h1>
+
+          <!-- <img src="../static/loader_small.gif" id="gif" style="display: none; width: 50px; height: 50px;"> -->
   
           {% for plot in stories %}
           <br>
-          <blockquote class="u-align-left u-text u-text-4">{{ plot }}</blockquote>
+          <blockquote class="u-align-left u-text u-text-4">
+            {{ plot }}
+        </blockquote>
+          <br>
           <br>
           {% endfor %}
           
         </div>
       </section>
 
+      
+      
+      <footer class="u-align-center u-clearfix u-footer u-grey-80 u-footer" id="sec-114c"><div class="u-clearfix u-sheet u-sheet-1">
+          <p class="u-small-text u-text u-text-variant u-text-1">FLAMES with text generator using GPT2. By Cedric Basuel.<br>
+          </p>
+        </div></footer>
+      <section class="u-backlink u-clearfix u-grey-80">
+        <a class="u-link" href="https://nicepage.com/website-templates" target="_blank">
+          <span>Website Templates</span>
+        </a>
+        <p class="u-text">
+          <span>created with</span>
+        </p>
+        <a class="u-link" href="https://nicepage.com/" target="_blank">
+          <span>Website Builder Software</span>
+        </a>. 
+      </section>
 
+      <script>
+      $("#start-loader").click(function() {
+        $("#gif").show();
+        setTimeout(function() {
+          $("#gif").hide();
+        }, 15500);
+      });
+    // });
+</script>
 
 </body>
 
