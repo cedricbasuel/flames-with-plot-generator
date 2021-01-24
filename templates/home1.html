@@ -30,7 +30,7 @@
           <h6 class="u-align-left u-text u-text-palette-4-dark-2 u-text-2">Flames was a popular game among children that aimed to determine a 'destiny' given a pair of names. Here, we revisit the game and level it up by using OpenAI's GPT2 model to generate a story based on the flames status.<br>
           </h6>
           <div class="u-expanded-width-xs u-form u-form-1">
-            <form action="{{ url_for('predict') }}" method="POST" class="u-clearfix u-form-horizontal u-form-spacing-15 u-inner-form" style="padding: 15px">
+            <form autocomplete="off" action="{{ url_for('predict') }}" method="POST" class="u-clearfix u-form-horizontal u-form-spacing-15 u-inner-form" style="padding: 15px">
               <div class="u-form-group u-form-name">
                 <input class="form-control" type="text" name="name1" placeholder="Name 1" required="required">
               </div>
