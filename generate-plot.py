@@ -1,6 +1,6 @@
 '''Text generation script from a pretrained GPT2 model.
 
-Code for training with own data is at train-text-gen-gpt2.py.
+Code for training with own data is at <<train-text-gen-gpt2.py>>.
 
 Usage:
     python generate-plot.py config.yaml
