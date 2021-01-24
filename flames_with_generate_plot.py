@@ -1,18 +1,16 @@
 '''FLAMES game with plot generator.
 
 Usage:
-    python flames-with-generate-plot.py config.py
+    python flames-with-generate-plot.py config.yaml
 
 Author:
     Cedric Basuel
 '''
 
 # TO DO docstrings
-# TO DO [app.py] split flames from  generate_plot
-# TO DO transfer config
-# TO DO ung comma in front of input prompt transfer sa function
+# TO DO [app.py] split flames from generate_plot
+# TO DO transfer config (or enuf na tong yaml?)
 # TO DO [UI] animations or progress bar
-# TO DO readme.md, incl carbon.now.sh / https://hackernoon.com/presenting-your-code-beautifully-fdbab9e6fb68
 
 import flames
 import logging
@@ -40,6 +38,7 @@ def timer(func):
         return value
     return wrapper_time
 
+@timer
 def load_gpt_model(model_path, tokenizer_path, device):
     model = GPT2LMHeadModel.from_pretrained(model_path)
     tokenizer = AutoTokenizer.from_pretrained(tokenizer_path)
@@ -63,7 +62,7 @@ def create_input_prompts(name1, name2, flames_status, n_plots):
 
     context = prompts[flames_status]
 
-    input_prompts = ['<BOS> ' + name1 + ', ' + random.choice(context) + name2 + ', ' for n_plot in range(n_plots)]
+    input_prompts = ['<BOS> ' + name1 + ', ' + random.choice(context) + ' ' + name2 + ' ' for n_plot in range(n_plots)]
 
     return input_prompts
 
@@ -93,7 +92,6 @@ def generate_plot(
             plots.append(text[0])
 
     return plots
-
 
 
 if __name__ == "__main__":
@@ -130,14 +128,6 @@ if __name__ == "__main__":
         repetition_penalty=config['gpt_generate']['rep_penalty'],
         num_return_sequences=config['gpt_generate']['num_return_sequences'],
         )
-
-    ### [DONE] TO DO create load function para sa model para pwedeng i-import
-    ### [DONE] TO DO create predict function na isa-isa lang ung param na pwedeng i-loop 
-    ### [DONE] TO DO num_return_seq is just 1 tapos loop thru hyperparams
-    ### [DONE] tapos randomize input prompt  each time
-    ### UI: parang super quick animation nung six na words  ng flames while the results
-    ### UI: tapos ung generated text parang typing animation. 
-    ### UI: one letter at a time tapos may 3 dots at the end
 
     # Clean generated text
     plots_list = [plot['generated_text'].replace('<BOS> ','') for plot in plots]
