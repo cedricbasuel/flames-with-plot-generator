@@ -1,10 +1,15 @@
 gpt_training:
-  dir:
-  model_name:
-  block_size:
-  save_steps:
+  dir: /home/cedric/Desktop/flames-with-plot-generator
+  model_name: gpt2
+  block_size: 128
+  save_steps: 10000
 gpt_generate:
-  dir:
-  max_length:
-  num_return_sequences:
-  temperature:
+  dir: /home/cedric/Downloads/text-generation-1/text-generation
+  max_length: 100
+  num_return_sequences: 1
+  temperatures: [0.7,0.9,1.2]
+  n_plots: 3
+  top_p: 0.9
+  top_k: 60
+  do_sample: True
+  rep_penalty: 1.1

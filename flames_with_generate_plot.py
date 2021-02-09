@@ -117,13 +117,16 @@ if __name__ == "__main__":
     flames_status = flames.get_flames_status(unique_letters)
     print('FLAMES status:', flames_status)
 
+    # Create input prompts
     input_prompts = create_input_prompts(name1, name2, flames_status, n_plots=config['gpt_generate']['n_plots'])
 
+    # Load model
     story_generator = load_gpt_model(
         model_path=config['gpt_generate']['dir'], 
         tokenizer_path=config['gpt_generate']['dir'],
         device=0)
 
+    # Generate stories
     plots = generate_plot(
         story_generator,
         input_prompts=input_prompts,
@@ -139,6 +142,7 @@ if __name__ == "__main__":
     # Clean generated text
     plots_list = [plot['generated_text'].replace('<BOS> ','') for plot in plots]
 
+    # Print output
     for plot in plots_list:
         print('*' * 30)
         print(plot)

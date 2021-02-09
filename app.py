@@ -4,7 +4,7 @@ import flames_with_generate_plot
 import sys, yaml
 
 
-# replace with flask config!!
+# Replace with flask config?
 CONFIG_FILE = sys.argv[1]
 
 with open(CONFIG_FILE) as cfg:
@@ -12,6 +12,7 @@ with open(CONFIG_FILE) as cfg:
 
 app = Flask(__name__)
 
+# Load model
 story_generator = flames_with_generate_plot.load_gpt_model(
         model_path=config['gpt_generate']['dir'], 
         tokenizer_path=config['gpt_generate']['dir'],
@@ -23,16 +24,18 @@ def home():
     return render_template('home1.html')
 
 
-
 @app.route('/predict', methods=['POST'])
 def predict():
 
+    # Get names
     name1 = request.form['name1']
     name2 = request.form['name2']
 
+    # Get flames status
     unique_letters = flames.remove_common_letters(name1, name2)
     flames_status = flames.get_flames_status(unique_letters)
 
+    # Create input prompts
     input_prompts = flames_with_generate_plot.create_input_prompts(
         name1, 
         name2, 
@@ -40,6 +43,7 @@ def predict():
         n_plots=config['gpt_generate']['n_plots']
         )
 
+    # Generate stories
     plots = flames_with_generate_plot.generate_plot(
         story_generator,
         input_prompts=input_prompts,
@@ -52,10 +56,10 @@ def predict():
         num_return_sequences=config['gpt_generate']['num_return_sequences'],
         )
 
+    # Clean output
     plots_list = [plot['generated_text'].replace('<BOS> ','') for plot in plots]
 
     return render_template('home1.html', stories=plots_list, status=flames_status)
-
 
 
 if __name__ == "__main__" :
