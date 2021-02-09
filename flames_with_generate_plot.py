@@ -47,6 +47,9 @@ def load_gpt_model(model_path, tokenizer_path, device):
         tokenizer=tokenizer, 
         # device=0
         )
+
+    logging.info('GPT2 model loaded.')
+
     return story_generator
 
 def create_input_prompts(name1, name2, flames_status, n_plots):
@@ -63,6 +66,8 @@ def create_input_prompts(name1, name2, flames_status, n_plots):
     context = prompts[flames_status]
 
     input_prompts = ['<BOS> ' + name1 + ', ' + random.choice(context) + ' ' + name2 + ' ' for n_plot in range(n_plots)]
+
+    logging.info('Input prompts created.')
 
     return input_prompts
 
@@ -90,6 +95,8 @@ def generate_plot(
                 num_return_sequences=num_return_sequences,
             )
             plots.append(text[0])
+    
+        logging.info('Plots generated.')
 
     return plots
 
